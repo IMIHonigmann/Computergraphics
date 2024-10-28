@@ -17,6 +17,9 @@ public class Aufgabe1 extends AbstractOpenGLBase {
 						"aufgabe1.glsl");
 		glUseProgram(shaderProgram.getId());
 
+		int resolutionLocation = glGetUniformLocation(shaderProgram.getId(), "uAufloesung");
+		glUniform2f(resolutionLocation, 700.0f, 700.0f);
+
 		glBindVertexArray(glGenVertexArrays());
 		glEnableVertexAttribArray(0);
 		glBindBuffer(GL_ARRAY_BUFFER, glGenBuffers());

@@ -1,21 +1,46 @@
-#version 330 core
+#version 330
 
-// Interpolated out color from the vertex shader
-vec3 fragColor = vec3(1.0, 1.0, 0.0);
-vec3 point1 = vec3(1.0, 2.0, 3.0);
-vec2 center = vec2(350.0, 350.0);
-float radius = 40.0;
+out vec4 pixelFarbe;
 
-out vec4 outColor;
+uniform vec2 uAufloesung;
 
-void main()
-{
-    vec2 pixelPosition = gl_FragCoord.xy;
-    float dist = distance(center, pixelPosition);
+// Checks if a point is within a circle centered at a given position with a specific radius
+bool inCircle(vec2 point, float radius, vec2 center) {
+    return distance(point, center) <= radius;
+}
 
-    outColor = vec4(fragColor, 1.0);
-    if(dist < radius) {
-        outColor = vec4(1.0, 0.0, 0.0, 1.0);
-    }
+// Checks if a point is within a rectangle of a given scale centered at (0.5, 0.5)
+bool inRect(vec2 point, vec2 scale) {
+    vec2 minCorner = vec2(0.5) - scale * 0.5;
+    vec2 maxCorner = vec2(0.5) + scale * 0.5;
+    return point.x >= minCorner.x && point.x <= maxCorner.x && point.y >= minCorner.y && point.y <= maxCorner.y;
+}
 
+// Rotation matrix for 2D transformations
+mat2 rotate(float angle) {
+    return mat2(cos(angle), -sin(angle), sin(angle), cos(angle));
+}
+
+void main() {
+    vec2 coord = gl_FragCoord.xy / uAufloesung;
+    vec3 color = vec3(0.1); // Background color
+
+    // Draw rectangles and circles with specific colors
+    if (inRect(rotate(0.5) * coord, vec2(0.4)))
+    color = vec3(0.0, 1.0, 0.0); // Green
+
+    if (inRect(coord, vec2(0.2)))
+    color = vec3(1.0, 0.0, 0.0); // Red
+
+    vec2 rotatedCoord = rotate(0.3) * (coord - vec2(0.5)) + vec2(0.5);
+    if (inRect(rotatedCoord, vec2(0.1)))
+    color = vec3(0.0, 0.0, 1.0); // Blue
+
+    if (inCircle(coord, 0.1, vec2(1.0, 1.0)))
+    color = vec3(1.0, 0.0, 0.5); // Magenta
+
+    if (inCircle(coord, 0.3, vec2(1.5, 0.5)))
+    color = vec3(1.0, 1.0, 0.5); // Yellowish
+
+    pixelFarbe = vec4(color, 1.0);
 }
