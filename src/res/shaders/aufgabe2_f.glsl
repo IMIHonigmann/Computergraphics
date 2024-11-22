@@ -1,20 +1,9 @@
 #version 330
 
-vec3 fragColor = vec3(1.0, 1.0, 0.0);
-vec3 point1 = vec3(1.0, 2.0, 3.0);
-vec2 center = vec2(350.0, 350.0);
-float radius = 40.0;
+in vec3 fragColor;  // Interpolated color from the vertex shader
+out vec4 color;     // Output to the framebuffer
 
-out vec4 outColor;
-
-void main()
-{
-    vec2 pixelPosition = gl_FragCoord.xy;
-    float dist = distance(center, pixelPosition);
-
-    outColor = vec4(fragColor, 1.0);
-    if(dist < radius) {
-        outColor = vec4(1.0, 0.0, 0.0, 1.0);
-    }
-
+void main() {
+    // Set the output color to the interpolated vertex color
+    color = vec4(fragColor, 1.0);
 }
